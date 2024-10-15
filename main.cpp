@@ -97,6 +97,45 @@ public:
   {
     return pieces;
   }
+
+  void initPieces()
+  {
+
+    int index = 0;
+
+    if (isTop)
+    {
+      for (int i = 0; i < 3; i++)
+      {
+        for (int j = 0; j < 8; j++)
+        {
+          if ((i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0))
+          {
+            pieces[index].id = index + 1;
+            pieces[index].pos.x = i;
+            pieces[index].pos.y = j;
+            index++;
+          }
+        }
+      }
+    }
+    else
+    {
+      for (int i = 5; i < 8; i++)
+      {
+        for (int j = 0; j < 8; j++)
+        {
+          if ((i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0))
+          {
+            pieces[index].id = index + 1;
+            pieces[index].pos.x = i;
+            pieces[index].pos.y = j;
+            index++;
+          }
+        }
+      }
+    }
+  };
 };
 
 class Case
@@ -149,7 +188,6 @@ class Damier
 private:
   int row = 8;
   int col = 8;
-  //    char board[10][10];
   Case board[8][8];
 
 public:
@@ -250,13 +288,13 @@ int main()
 
   for (int i = 0; i < 12; i++)
   {
-    cout << "Erwan Position :" << piecesPlayer1[i].pos.x << "," << piecesPlayer1[i].pos.y << endl;
+    // cout << "Erwan Position :" << piecesPlayer1[i].pos.x << "," << piecesPlayer1[i].pos.y << endl;
     damier.putPiece(piecesPlayer1[i].pos.x, piecesPlayer1[i].pos.y, piecePlayer1);
   }
 
   for (int i = 0; i < 12; i++)
   {
-    cout << "Joker Position :" << piecesPlayer2[i].pos.x << "," << piecesPlayer2[i].pos.y << endl;
+    // cout << "Joker Position :" << piecesPlayer2[i].pos.x << "," << piecesPlayer2[i].pos.y << endl;
     damier.putPiece(piecesPlayer2[i].pos.x, piecesPlayer2[i].pos.y, piecePlayer2);
   }
 
