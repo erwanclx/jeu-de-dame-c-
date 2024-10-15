@@ -50,36 +50,36 @@ public:
   {
     this->pos.x = x;
     this->pos.y = y;
-  };
+  }
   void setIsOccuped(bool isOccuped)
   {
     this->isOccuped = isOccuped;
-  };
-  void setCaseColor(string pieceColor)
+  }
+  void setCaseColor(string caseColor)
   {
-    this->pieceColor = pieceColor;
-  };
+    this->caseColor = caseColor;
+  }
   void setPieceColor(string pieceColor)
   {
     this->pieceColor = pieceColor;
-  };
+  }
 
   Position getPos()
   {
     return pos;
-  };
+  }
   bool getIsOccuped()
   {
     return isOccuped;
-  };
+  }
   string getCaseColor()
   {
-    return pieceColor;
-  };
+    return caseColor;
+  }
   string getPieceColor()
   {
     return pieceColor;
-  };
+  }
 };
 
 class Damier
@@ -123,7 +123,7 @@ public:
         }
       }
     }
-  };
+  }
   void printBoard()
   {
     for (int i = 0; i < row; i++)
@@ -137,7 +137,13 @@ public:
         }
       }
     }
-  }
+
+    for (int i = 0; i < col; i++)
+    {
+      cout << "---";
+    }
+    cout << endl;
+    }
   Case &getCase(int x, int y)
   {
     return board[x][y];
@@ -171,7 +177,6 @@ class Player
 {
 private:
   string name;
-  string pieceSymbol;
   string color;
   string bgColor;
   Piece pieces[12];
@@ -181,29 +186,32 @@ public:
   void setName(string name)
   {
     this->name = name;
-  };
-  void setPieceSymbol(string pieceSymbol)
-  {
-    this->pieceSymbol = pieceSymbol;
-  };
+  }
   void setColor(string color)
   {
     this->color = color;
-  };
+  }
   void setBgColor(string bgColor)
   {
     this->bgColor = bgColor;
-  };
+  }
   void setIsTop(bool isTop)
   {
     this->isTop = isTop;
-  };
+  }
 
-  string getPieceSymbol()
+  string getPieceSymbol(int id)
   {
     Color palette;
-    return color + bgColor + " " + pieceSymbol + " " + palette.reset;
-  };
+    if (id > 9)
+    {
+      return color + bgColor + " " + to_string(id) + palette.reset;
+    }
+    else
+    {
+      return color + bgColor + "  " + to_string(id) + palette.reset;
+    }
+  }
   string getName()
   {
     return name;
@@ -212,13 +220,6 @@ public:
   {
     return isTop;
   }
-  void printPieces()
-  {
-    for (int i = 0; i < 12; i++)
-    {
-      cout << pieces[i].id;
-    }
-  }
   Piece (&getPieces())[12]
   {
     return pieces;
@@ -226,7 +227,6 @@ public:
 
   void initPieces()
   {
-
     int index = 0;
 
     if (isTop)
@@ -261,7 +261,7 @@ public:
         }
       }
     }
-  };
+  }
   bool movePiece(int id, int x, int y, Damier &damier)
   {
     for (int i = 0; i < 12; i++)
@@ -271,28 +271,39 @@ public:
         int currentX = pieces[i].pos.x;
         int currentY = pieces[i].pos.y;
 
-        if (x >= 0 && x < 8 && y >= 0 && y < 8)
+        // cout << x << " " << y << endl;
+        // cout << currentX << " " << currentY << endl;
+        cout << x - currentX << " " << y - currentY << endl;
+
+        if (x >= 0 && x < 8 && y >= 0 && y < 8 && x != currentX && y != currentY && (x - currentX == y - currentY) || (x - currentX == -(y - currentY)))
         {
           if (!damier.getCase(x, y).getIsOccuped())
           {
             damier.removePiece(currentX, currentY);
-            damier.putPiece(x, y, getPieceSymbol());
+            damier.putPiece(x, y, getPieceSymbol(id));
+            pieces[i].pos.x = x;
+            pieces[i].pos.y = y;
             return true;
           }
           else
           {
-            cout << "Impossible de bouger la piece" << endl;
+            cout << "Case occupée" << endl;
             return false;
           }
         }
+        else
+        {
+          cout << "Position invalide." << endl;
+          return false;
+        }
       }
     }
-  };
+    return false;
+  }
 };
 
 int main()
 {
-
   Player player1;
   Player player2;
 
@@ -300,31 +311,19 @@ int main()
 
   player1.setColor(color.black);
   player1.setBgColor(color.bgRed);
-  player1.setPieceSymbol("1");
   player1.setName("Erwan");
   player1.setIsTop(true);
 
   player2.setColor(color.black);
   player2.setBgColor(color.bgGreen);
-  player2.setPieceSymbol("2");
   player2.setName("Joker");
   player2.setIsTop(false);
 
   player1.initPieces();
   player2.initPieces();
 
-  string piecePlayer1 = player1.getPieceSymbol();
-  string piecePlayer2 = player2.getPieceSymbol();
-
-  cout << "Player 1 : " << player1.getName() << endl;
-  cout << "Player 1 symbol : " << player1.getPieceSymbol() << endl;
-
-  cout << "Player 2 : " << player2.getName() << endl;
-  cout << "Player 2 symbol : " << player2.getPieceSymbol() << endl;
-
   Damier damier;
   damier.initBoard();
-
   damier.printBoard();
   cout << endl;
 
@@ -333,19 +332,32 @@ int main()
 
   for (int i = 0; i < 12; i++)
   {
-    damier.putPiece(piecesPlayer1[i].pos.x, piecesPlayer1[i].pos.y, piecePlayer1);
+    damier.putPiece(piecesPlayer1[i].pos.x, piecesPlayer1[i].pos.y, player1.getPieceSymbol(piecesPlayer1[i].id));
   }
 
   for (int i = 0; i < 12; i++)
   {
-    damier.putPiece(piecesPlayer2[i].pos.x, piecesPlayer2[i].pos.y, piecePlayer2);
+    damier.putPiece(piecesPlayer2[i].pos.x, piecesPlayer2[i].pos.y, player2.getPieceSymbol(piecesPlayer2[i].id));
   }
 
   damier.printBoard();
   cout << endl;
 
-  player1.movePiece(1, 3, 4, damier);
-
+  // Non valide
+  player1.movePiece(1, 3, 1, damier);
   damier.printBoard();
-  cout << endl;
+
+  // Valide
+  player1.movePiece(1, 4, 5, damier);
+  damier.printBoard();
+
+  // Case occupée
+  player1.movePiece(1, 5, 6, damier);
+  damier.printBoard();
+
+  // Valide
+  player1.movePiece(1, 3, 4, damier);
+  damier.printBoard();
+
+  return 0;
 }
