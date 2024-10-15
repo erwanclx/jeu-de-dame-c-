@@ -24,6 +24,7 @@ struct Color
   string bgCyan = "\033[1;46m";
   string bgWhite = "\033[1;47m";
 };
+Color palette;
 
 struct Position
 {
@@ -92,7 +93,6 @@ private:
 public:
   void initBoard()
   {
-    Color palette;
     for (int i = 0; i < row; i++)
     {
       for (int j = 0; j < col; j++)
@@ -126,6 +126,19 @@ public:
   }
   void printBoard()
   {
+
+    for (int i = 0; i < col; i++)
+    {
+      cout << "---";
+    }
+    cout << endl;
+
+    for (int i = 0; i < col; i++)
+    {
+      cout << " " << i << " ";
+    }
+    cout << endl;
+
     for (int i = 0; i < row; i++)
     {
       for (int j = 0; j < col; j++)
@@ -133,6 +146,7 @@ public:
         cout << board[i][j].getCaseColor();
         if (j == col - 1)
         {
+          cout << " " << i;
           cout << endl;
         }
       }
@@ -143,7 +157,7 @@ public:
       cout << "---";
     }
     cout << endl;
-    }
+  }
   Case &getCase(int x, int y)
   {
     return board[x][y];
@@ -156,7 +170,6 @@ public:
   }
   void removePiece(int x, int y)
   {
-    Color palette;
     board[x][y].setIsOccuped(false);
     if (x % 2 == 0 && y % 2 == 0)
     {
@@ -202,7 +215,6 @@ public:
 
   string getPieceSymbol(int id)
   {
-    Color palette;
     if (id > 9)
     {
       return color + bgColor + " " + to_string(id) + palette.reset;
@@ -262,6 +274,17 @@ public:
       }
     }
   }
+
+  void previewMovement(int x, int y, Damier &damier)
+  {
+    Case &targetCase = damier.getCase(x, y);
+    string originalColor = targetCase.getCaseColor();
+
+    targetCase.setCaseColor(palette.bgYellow + "   " + palette.reset);
+    cout << palette.yellow << "Voulez-vous valider ?" << palette.reset << endl;
+    damier.printBoard();
+  }
+
   bool movePiece(int id, int x, int y, Damier &damier)
   {
     for (int i = 0; i < 12; i++)
@@ -271,29 +294,38 @@ public:
         int currentX = pieces[i].pos.x;
         int currentY = pieces[i].pos.y;
 
-        // cout << x << " " << y << endl;
-        // cout << currentX << " " << currentY << endl;
-        cout << x - currentX << " " << y - currentY << endl;
-
         if (x >= 0 && x < 8 && y >= 0 && y < 8 && x != currentX && y != currentY && (x - currentX == y - currentY) || (x - currentX == -(y - currentY)))
         {
+
           if (!damier.getCase(x, y).getIsOccuped())
           {
+            cout << palette.green << "================================" << palette.reset << endl;
+
+            previewMovement(x, y, damier);
+
             damier.removePiece(currentX, currentY);
             damier.putPiece(x, y, getPieceSymbol(id));
             pieces[i].pos.x = x;
             pieces[i].pos.y = y;
+
+            cout << palette.green << "Coup joué ->" << palette.reset << endl;
+            damier.printBoard();
+            cout << palette.green << "================================" << palette.reset << endl;
             return true;
           }
           else
           {
-            cout << "Case occupée" << endl;
+            cout << palette.red << "================================" << palette.reset << endl;
+            cout << palette.red << "Case occupée. Veuillez réessayer" << palette.reset << endl;
+            cout << palette.red << "================================" << palette.reset << endl;
             return false;
           }
         }
         else
         {
-          cout << "Position invalide." << endl;
+          cout << palette.red << "=====================================" << palette.reset << endl;
+          cout << palette.red << "Position invalide. Veuillez réessayer" << palette.reset << endl;
+          cout << palette.red << "=====================================" << palette.reset << endl;
           return false;
         }
       }
@@ -307,15 +339,13 @@ int main()
   Player player1;
   Player player2;
 
-  Color color;
-
-  player1.setColor(color.black);
-  player1.setBgColor(color.bgRed);
+  player1.setColor(palette.black);
+  player1.setBgColor(palette.bgRed);
   player1.setName("Erwan");
   player1.setIsTop(true);
 
-  player2.setColor(color.black);
-  player2.setBgColor(color.bgGreen);
+  player2.setColor(palette.black);
+  player2.setBgColor(palette.bgGreen);
   player2.setName("Joker");
   player2.setIsTop(false);
 
@@ -324,7 +354,7 @@ int main()
 
   Damier damier;
   damier.initBoard();
-  damier.printBoard();
+  // damier.printBoard();
   cout << endl;
 
   Piece(&piecesPlayer1)[12] = player1.getPieces();
@@ -345,19 +375,19 @@ int main()
 
   // Non valide
   player1.movePiece(1, 3, 1, damier);
-  damier.printBoard();
 
   // Valide
   player1.movePiece(1, 4, 5, damier);
-  damier.printBoard();
 
   // Case occupée
   player1.movePiece(1, 5, 6, damier);
-  damier.printBoard();
 
   // Valide
   player1.movePiece(1, 3, 4, damier);
-  damier.printBoard();
+
+  // ========================
+  player2.movePiece(1, 4, 1, damier);
+  player2.movePiece(1, 3, 2, damier);
 
   return 0;
 }
