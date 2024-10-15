@@ -104,11 +104,12 @@ class Damier
   private:
     int row = 10;
     int col = 10;
-    char board[10][10];
+//    char board[10][10];
+    Case board[10][10];
 
   public:
 
-    void colorBoard()
+    void initBoard()
     {
       for (int i = 0; i < row; i++)
       {
@@ -116,14 +117,26 @@ class Damier
         {
           if (j % 2 == 0 && i % 2 == 0)
             {
-              board[i][j] = '*';
+                Case newCase;
+                newCase.setPos(i, j);
+                newCase.setIsOccuped(false);
+                newCase.setCaseColor("*");
+                board[i][j] = newCase;
             }
           else if (j % 2 == 1 && i % 2 == 1)
             {
-              board[i][j] = '*';
+                Case newCase;
+                newCase.setPos(i, j);
+                newCase.setIsOccuped(false);
+                newCase.setCaseColor("*");
+                board[i][j] = newCase;
             }
           else {
-              board[i][j] = '_';
+                Case newCase;
+                newCase.setPos(i, j);
+                newCase.setIsOccuped(false);
+                newCase.setCaseColor("_");
+                board[i][j] = newCase;
             }
         }
       }
@@ -137,14 +150,14 @@ class Damier
           {
           if (j % 2 == 0 && i % 2 == 0)
           {
-            cout << "| \033[1;34m" << board[i][j] << "\033[0m |";
+            cout << "| \033[1;34m" << board[i][j].getCaseColor() << "\033[0m |";
           }
           else if (j % 2 == 1 && i % 2 == 1)
           {
-            cout << "| \033[1;34m" << board[i][j] << "\033[0m |";
+            cout << "| \033[1;34m" << board[i][j].getCaseColor() << "\033[0m |";
           }
           else {
-            cout << "| \033[1;31m" << board[i][j] << "\033[0m |";
+            cout << "| \033[1;31m" << board[i][j].getCaseColor() << "\033[0m |";
           }
           if (j == col - 1)
             {
@@ -159,6 +172,6 @@ class Damier
 
 int main() {
   Damier damier;
-  damier.colorBoard();
+  damier.initBoard();
   damier.printBoard();
 }
