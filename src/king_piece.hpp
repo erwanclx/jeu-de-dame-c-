@@ -13,7 +13,7 @@ public:
         setIsKing(true);
     }
 
-    bool canMove(Position target, bool isTop)
+    bool canMove(Position target, bool isTop, Piece *pieces[12])
     {
         int deltaX = abs(target.x - getPos().x);
         int deltaY = abs(target.y - getPos().y);

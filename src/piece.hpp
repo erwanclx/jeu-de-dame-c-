@@ -2,6 +2,7 @@
 #define PIECE_HPP
 
 #include "position.hpp"
+#include "damier.hpp"
 #include <iostream>
 using namespace std;
 
@@ -13,8 +14,12 @@ private:
     bool isAte;
     bool isKing;
 
+protected:
+    Damier *damier;
+
 public:
     void setId(int id) { this->id = id; }
+    void setDamier(Damier *damier) { this->damier = damier; }
     void setPos(int x, int y)
     {
         this->pos.x = x;
@@ -27,7 +32,7 @@ public:
     Position getPos() { return pos; }
     bool getIsAte() { return isAte; }
     bool getIsKing() { return isKing; }
-    virtual bool canMove(Position target, bool isTop) { return false; };
+    virtual bool canMove(Position target, bool isTop, Piece *pieces[12]) { return false; };
 };
 
 #endif

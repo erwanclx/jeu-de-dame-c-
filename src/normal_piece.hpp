@@ -13,7 +13,7 @@ public:
         setIsKing(false);
     }
 
-    bool canMove(Position target, bool isTop) override
+    bool canMove(Position target, bool isTop, Piece *pieces[12]) override
     {
         int deltaX = abs(target.x - getPos().x);
         int deltaY = abs(target.y - getPos().y);
@@ -27,6 +27,29 @@ public:
                     return true;
                 }
             }
+        }
+        else if (deltaX == 2 && deltaY == 2)
+        {
+            int middleX = (getPos().x + target.x) / 2;
+            int middleY = (getPos().y + target.y) / 2;
+
+            for (int i = 0; i < 12; i++)
+            {
+                if (pieces[i]->getPos().x == middleX && pieces[i]->getPos().y == middleY)
+                {
+                    Piece *capturedPiece = pieces[i];
+                    if (!capturedPiece->getIsAte())
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return false;
         }
         return false;
     };

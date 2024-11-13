@@ -23,7 +23,8 @@ public:
     {
         for (int i = 0; i < 12; i++)
         {
-            pieces[i] = new NormalPiece();
+            pieces[i] = new kingPiece();
+            // pieces[i] = new NormalPiece();
         }
     }
 
@@ -51,6 +52,11 @@ public:
 
     string getPieceSymbol(int id)
     {
+        if (pieces[id - 1]->getIsKing())
+        {
+            color = palette.yellow;
+        }
+
         if (id > 9)
         {
             return color + bgColor + " " + to_string(id) + palette.reset;
@@ -61,7 +67,7 @@ public:
         }
     }
 
-    void initPieces()
+    void initPieces(Damier *damier)
     {
         int index = 0;
         int startRow = isTop ? 0 : 5;
@@ -74,6 +80,7 @@ public:
                 if ((i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0))
                 {
                     pieces[index]->setId(index + 1);
+                    pieces[index]->setDamier(damier);
                     pieces[index]->setPos(i, j);
                     pieces[index]->setIsAte(false);
                     index++;
@@ -115,100 +122,72 @@ public:
                     target.x = x;
                     target.y = y;
 
-                    if (pieces[i]->canMove(target, isTop))
+                    if (pieces[i]->canMove(target, isTop, opponent.getPieces()) && !damier.getCase(x, y).getIsOccuped())
                     {
-                        pieces[i]->setPos(x, y);
-                        damier.removePiece(pieces[i]->getPos().x, pieces[i]->getPos().y);
-                        damier.putPiece(x, y, getPieceSymbol(id));
-                        damier.printBoard();
-                        return true;
+                        previewMovement(x, y, damier);
+
+                        string confirm;
+                        cout << palette.green << "Confirmer ? (1: Oui, 0: Non)" << palette.reset << endl;
+                        cin >> confirm;
+                        if (confirm != "1")
+                        {
+                            damier.getCase(x, y).setCaseColor(palette.bgWhite + "   " + palette.reset);
+                            damier.printBoard();
+                            cout << "false";
+                            return false;
+                        }
+                        else
+                        {
+                            int deltaX = abs(target.x - pieces[i]->getPos().x);
+                            int deltaY = abs(target.y - pieces[i]->getPos().y);
+
+                            if (deltaX == 2 && deltaY == 2)
+                            {
+                                int middleX = (pieces[i]->getPos().x + x) / 2;
+                                int middleY = (pieces[i]->getPos().y + y) / 2;
+                                opponent.findPieceAtPosition(middleX, middleY)->setIsAte(true);
+                                damier.removePiece(middleX, middleY);
+                                incrementScore();
+                                cout << palette.green << "Capture réussie! Score: " << score << palette.reset << endl;
+                            }
+
+                            damier.removePiece(pieces[i]->getPos().x, pieces[i]->getPos().y);
+                            damier.putPiece(x, y, getPieceSymbol(id));
+                            pieces[i]->setPos(x, y);
+                            cout << palette.yellow << pieces[i]->getPos().x << "   " << pieces[i]->getPos().y << palette.reset << endl;
+                            cout << palette.green << "Coup joué ->" << palette.reset << endl;
+
+                            if (isTop && x == 7)
+                            {
+                                int kingId = pieces[i]->getId();
+                                Position pos = pieces[i]->getPos();
+                                delete pieces[i];
+                                pieces[i] = new kingPiece();
+                                pieces[i]->setId(kingId);
+                                pieces[i]->setPos(pos.x, pos.y);
+                            }
+                            else if (!isTop && x == 0)
+                            {
+                                int kingId = pieces[i]->getId();
+                                Position pos = pieces[i]->getPos();
+                                delete pieces[i];
+                                pieces[i] = new kingPiece();
+                                pieces[i]->setId(kingId);
+                                pieces[i]->setPos(pos.x, pos.y);
+                            }
+
+                            damier.printBoard();
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        cout << palette.red << "Mouvement invalide" << endl;
+                        return false;
                     }
                 }
             }
         }
-        // {
-        //     int currentX = pieces[i].getPos().x;
-        //     int currentY = pieces[i].getPos().y;
-
-        //     if (x >= 0 && x < 8 && y >= 0 && y < 8)
-        //     {
-        //         int deltaX = abs(x - currentX);
-        //         int deltaY = abs(y - currentY);
-
-        //         if (deltaX == 1 && deltaY == 1)
-        //         {
-        //             if ((isTop && x > currentX) || (!isTop && x < currentX))
-        //             {
-        //                 if (!damier.getCase(x, y).getIsOccuped())
-        //                 {
-        //                     previewMovement(x, y, damier);
-
-        //                     string confirm;
-        //                     cout << palette.green << "Confirmer ? (1: Oui, 0: Non)" << palette.reset << endl;
-        //                     cin >> confirm;
-        //                     if (confirm != "1")
-        //                     {
-        //                         damier.getCase(x, y).setCaseColor(palette.bgWhite + "   " + palette.reset);
-        //                         damier.printBoard();
-        //                         return false;
-        //                     }
-
-        //                     damier.removePiece(currentX, currentY);
-        //                     damier.putPiece(x, y, getPieceSymbol(id));
-        //                     pieces[i].setPos(x, y);
-
-        //                     cout << palette.green << "Coup joué ->" << palette.reset << endl;
-        //                     damier.printBoard();
-        //                     return true;
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 cout << palette.red << "Mouvement dans la mauvaise direction" << palette.reset << endl;
-        //                 return false;
-        //             }
-        //         }
-
-        //         else if (deltaX == 2 && deltaY == 2)
-        //         {
-        //             int middleX = (currentX + x) / 2;
-        //             int middleY = (currentY + y) / 2;
-
-        //             Piece *capturedPiece = opponent.findPieceAtPosition(middleX, middleY);
-        //             if (capturedPiece && !damier.getCase(x, y).getIsOccuped())
-        //             {
-        //                 previewMovement(x, y, damier);
-
-        //                 string confirm;
-        //                 cout << palette.green << "Confirmer la capture ? (1: Oui, 0: Non)" << palette.reset << endl;
-        //                 cin >> confirm;
-        //                 if (confirm != "1")
-        //                 {
-        //                     damier.getCase(x, y).setCaseColor(palette.bgWhite + "   " + palette.reset);
-        //                     damier.printBoard();
-        //                     return false;
-        //                 }
-
-        //                 capturedPiece->setIsAte(true);
-        //                 damier.removePiece(middleX, middleY);
-
-        //                 damier.removePiece(currentX, currentY);
-        //                 damier.putPiece(x, y, getPieceSymbol(id));
-        //                 pieces[i].setPos(x, y);
-
-        //                 incrementScore();
-
-        //                 cout << palette.green << "Capture réussie! Score: " << score << palette.reset << endl;
-        //                 damier.printBoard();
-        //                 return true;
-        //             }
-        //         }
-        //     }
-
-        //     cout << palette.red << "Position invalide. Veuillez réessayer" << palette.reset << endl;
-        //     return false;
-        // }
-        // }
         cout << palette.red << "Pièce non trouvée ou déjà mangée" << palette.reset << endl;
         return false;
     }

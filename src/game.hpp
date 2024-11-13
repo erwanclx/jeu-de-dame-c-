@@ -76,8 +76,8 @@ public:
         player2.setName(name2);
         player2.setIsTop(false);
 
-        player1.initPieces();
-        player2.initPieces();
+        player1.initPieces(&damier);
+        player2.initPieces(&damier);
         damier.initBoard();
 
         Piece **pieces1 = player1.getPieces();
