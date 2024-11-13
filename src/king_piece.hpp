@@ -5,12 +5,12 @@
 #include <iostream>
 using namespace std;
 
-class NormalPiece : public Piece
+class kingPiece : public Piece
 {
 public:
-    NormalPiece()
+    kingPiece()
     {
-        setIsKing(false);
+        setIsKing(true);
     }
 
     bool canMove(Position target, bool isTop)
@@ -18,14 +18,11 @@ public:
         int deltaX = abs(target.x - getPos().x);
         int deltaY = abs(target.y - getPos().y);
 
-        if (deltaX == 1 && deltaY == 1)
+        if (deltaX == deltaY)
         {
-            if ((isTop && target.x > getPos().x) || (!isTop && target.x < getPos().x))
+            if (target.x >= 0 && target.x < 8 && target.y >= 0 && target.y < 8)
             {
-                if (target.x >= 0 && target.x < 8 && target.y >= 0 && target.y < 8)
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;

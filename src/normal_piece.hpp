@@ -13,7 +13,7 @@ public:
         setIsKing(false);
     }
 
-    bool canMove(Position target, bool isTop)
+    bool canMove(Position target, bool isTop) override
     {
         int deltaX = abs(target.x - getPos().x);
         int deltaY = abs(target.y - getPos().y);

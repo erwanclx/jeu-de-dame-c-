@@ -27,6 +27,7 @@ public:
     Position getPos() { return pos; }
     bool getIsAte() { return isAte; }
     bool getIsKing() { return isKing; }
+    virtual bool canMove(Position target, bool isTop) { return false; };
 };
 
 #endif

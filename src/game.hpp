@@ -16,12 +16,12 @@ private:
     void displayRemainingPieces(Player &player)
     {
         cout << player.getBgColor() << player.getName() << " : " << palette.reset;
-        Piece *pieces = player.getPieces();
+        Piece **pieces = player.getPieces();
         for (int i = 0; i < 12; i++)
         {
-            if (!pieces[i].getIsAte())
+            if (!pieces[i]->getIsAte())
             {
-                cout << player.getBgColor() << " " << pieces[i].getId() << " " << palette.reset;
+                cout << player.getBgColor() << " " << pieces[i]->getId() << " " << palette.reset;
             }
         }
         cout << endl;
@@ -80,18 +80,18 @@ public:
         player2.initPieces();
         damier.initBoard();
 
-        Piece *pieces1 = player1.getPieces();
+        Piece **pieces1 = player1.getPieces();
         for (int i = 0; i < 12; i++)
         {
-            damier.putPiece(pieces1[i].getPos().x, pieces1[i].getPos().y,
-                            player1.getPieceSymbol(pieces1[i].getId()));
+            damier.putPiece(pieces1[i]->getPos().x, pieces1[i]->getPos().y,
+                            player1.getPieceSymbol(pieces1[i]->getId()));
         }
 
-        Piece *pieces2 = player2.getPieces();
+        Piece **pieces2 = player2.getPieces();
         for (int i = 0; i < 12; i++)
         {
-            damier.putPiece(pieces2[i].getPos().x, pieces2[i].getPos().y,
-                            player2.getPieceSymbol(pieces2[i].getId()));
+            damier.putPiece(pieces2[i]->getPos().x, pieces2[i]->getPos().y,
+                            player2.getPieceSymbol(pieces2[i]->getId()));
         }
 
         damier.printBoard();
