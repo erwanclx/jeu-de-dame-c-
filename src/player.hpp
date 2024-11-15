@@ -23,8 +23,7 @@ public:
     {
         for (int i = 0; i < 12; i++)
         {
-            pieces[i] = new kingPiece();
-            // pieces[i] = new NormalPiece();
+            pieces[i] = new NormalPiece();
         }
     }
 
@@ -140,15 +139,20 @@ public:
                         {
                             int deltaX = abs(target.x - pieces[i]->getPos().x);
                             int deltaY = abs(target.y - pieces[i]->getPos().y);
+                            int stepX = (target.x > pieces[i]->getPos().x) ? 1 : -1;
+                            int stepY = (target.y > pieces[i]->getPos().y) ? 1 : -1;
 
-                            if (deltaX == 2 && deltaY == 2)
+                            for (int j = 1; j < max(deltaX, deltaY); j++)
                             {
-                                int middleX = (pieces[i]->getPos().x + x) / 2;
-                                int middleY = (pieces[i]->getPos().y + y) / 2;
-                                opponent.findPieceAtPosition(middleX, middleY)->setIsAte(true);
-                                damier.removePiece(middleX, middleY);
-                                incrementScore();
-                                cout << palette.green << "Capture réussie! Score: " << score << palette.reset << endl;
+                                int middleX = pieces[i]->getPos().x + j * stepX;
+                                int middleY = pieces[i]->getPos().y + j * stepY;
+                                if (damier.getCase(middleX, middleY).getIsOccuped() && opponent.findPieceAtPosition(middleX, middleY))
+                                {
+                                    opponent.findPieceAtPosition(middleX, middleY)->setIsAte(true);
+                                    damier.removePiece(middleX, middleY);
+                                    incrementScore();
+                                    cout << palette.green << "Capture réussie! Score: " << score << palette.reset << endl;
+                                }
                             }
 
                             damier.removePiece(pieces[i]->getPos().x, pieces[i]->getPos().y);
