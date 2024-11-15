@@ -1,0 +1,34 @@
+############################################
+# Règles du jeu de dame (vue par ma mamie) #
+############################################
+# 1. Type de pions :
+# - Les pions normaux
+# - Les dames
+############################################
+# 2. Déplacement des pions :
+# - Les pions normaux se déplacent en diagonale d'une case 
+# vers l'avant d'une case (ou deux si un adversaires est entre les deux).
+# - Les dames se déplacent en diagonale d'autant de cases souhaitées dans toutes les directions.
+############################################ 
+# 3. Prise des pions :
+# - Les pions normaux peuvent prendre un pion adverse en sautant par dessus lui en diagonale.
+# - Les dames peuvent prendre un ou plusieurs pion(s) adverse en sautant par dessus lui
+# en diagonale d'autant de cases souhaitées.
+# 4. Promotion des pions :
+# - Lorsqu'un pion normal atteint la dernière rangée du plateau, il devient une dame.
+############################################
+# 5. Fin de partie :
+# - La partie se termine lorsqu'un joueur n'a plus de pions ou ne peut plus jouer.
+# - Un joueur gagne lorsqu'il a pris tous les pions de son adversaire.
+############################################
+# Autre :
+# Joueur 1 Pion rouge
+# Joueur 2 Pion vert
+# Texte doré = Dame
+############################################
+# Comment jouer :
+# - Pour déplacer un pion, sélectionnez le pion à déplacer par son identifiant (ex: 10) 
+# puis sélectionnez la case de destination en entrant les coordonnées de la case.
+#
+# Bonne partie !
+############################################
